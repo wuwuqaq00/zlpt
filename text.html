@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅游业 · 管理层与管培生人才分析器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+        }
+        body {
+            background: #f0f5fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 860px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0, 20, 40, 0.12);
+            padding: 40px 35px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #0a2a3b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .subhead {
+            color: #4a6b80;
+            font-size: 15px;
+            border-left: 5px solid #2b8cbe;
+            padding-left: 18px;
+            background: #edf5fa;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px 30px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #174a62;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #d8e6f0;
+            padding-bottom: 8px;
+            grid-column: 1 / -1;
+        }
+        .trait-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .trait-label {
+            width: 80px;
+            font-weight: 600;
+            color: #1d4055;
+            font-size: 15px;
+        }
+        .trait-label small {
+            font-weight: 400;
+            color: #7899ae;
+        }
+        .trait-slider {
+            flex: 1;
+            min-width: 120px;
+            height: 5px;
+            -webkit-appearance: none;
+            background: #d0dfe9;
+            border-radius: 10px;
+            outline: none;
+        }
+        .trait-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 17px;
+            height: 17px;
+            background: #1f7a9e;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(31, 122, 158, 0.3);
+        }
+        .trait-value {
+            width: 40px;
+            text-align: center;
+            font-weight: 700;
+            color: #0a2a3b;
+            background: #e8f0f6;
+            padding: 2px 0;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+        .mbti-select {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f7faff;
+            padding: 15px 20px;
+            border-radius: 60px;
+            border: 1px solid #dae7f0;
+            flex-wrap: wrap;
+        }
+        .mbti-select label {
+            font-weight: 700;
+            color: #174a62;
+            font-size: 16px;
+        }
+        .mbti-select select {
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid #b8d0dd;
+            background: white;
+            font-weight: 600;
+            color: #0a2a3b;
+            font-size: 15px;
+            flex: 1;
+            min-width: 150px;
+            cursor: pointer;
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 45px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 16px;
+            background: #1f7a9e;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(31, 122, 158, 0.25);
+            transition: 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover {
+            background: #136185;
+            transform: translateY(-2px);
+        }
+        .btn-reset {
+            background: #9db8cb;
+            box-shadow: none;
+        }
+        .btn-reset:hover {
+            background: #86a3b8;
+            transform: none;
+        }
+        .result-box {
+            margin-top: 30px;
+            padding: 20px 25px 25px;
+            background: #f8fcff;
+            border-radius: 30px;
+            border: 1px solid #d1e2ee;
+            display: none;
+        }
+        .result-box.show {
+            display: block;
+            animation: fadeUp 0.5s ease;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 10px;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 18px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e3eef7;
+        }
+        .card h3 {
+            font-size: 16px;
+            color: #1a4a62;
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #cbdce8;
+            padding-bottom: 8px;
+        }
+        .card .score-big {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0b2f42;
+        }
+        .card .score-big span {
+            font-size: 16px;
+            font-weight: 400;
+            color: #6b8fa5;
+        }
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .badge {
+            background: #dcecf7;
+            color: #11537a;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .badge.high {
+            background: #1f7a9e;
+            color: white;
+        }
+        .dept-match {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf3f8;
+            font-size: 14px;
+        }
+        .dept-match:last-child {
+            border-bottom: none;
+        }
+        .dept-name {
+            font-weight: 600;
+            color: #1a4055;
+        }
+        .dept-score {
+            background: #e3eef7;
+            padding: 0 14px;
+            border-radius: 40px;
+            font-weight: 700;
+            color: #136185;
+        }
+        .trait-tag {
+            display: inline-block;
+            background: #eaf3fa;
+            padding: 6px 16px;
+            border-radius: 40px;
+            margin: 3px 6px 3px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1d5a78;
+        }
+        .trait-tag .val {
+            color: #0b2f42;
+            font-weight: 800;
+        }
+        .footnote {
+            margin-top: 25px;
+            text-align: center;
+            color: #7f9db0;
+            font-size: 12px;
+            border-top: 1px solid #dce8f0;
+            padding-top: 18px;
+        }
+        .footnote span {
+            color: #1f7a9e;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        @media (max-width: 680px) {
+            .container {
+                padding: 20px;
+            }
+            .grid-2col {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .mbti-select {
+                border-radius: 30px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .trait-label {
+                width: 70px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧳 旅游业 · 干部人才分析</h1>
+    <div class="subhead">
+        ⚡ 针对 <strong>中层管理者 · 年轻干部 · 定岗管培生</strong> 设计。<br>
+        输入大五人格分数 + MBTI，系统将自动分析 <strong>领导潜力、核心特质、部门匹配度</strong>。
+    </div>
+
+    <!-- 输入区域 -->
+    <div class="grid-2col">
+        <div class="section-title">📊 输入大五人格分数 (0-100)</div>
+
+        <div class="trait-item"><span class="trait-label">🧠 开放 <small>O</small></span>
+            <input type="range" class="trait-slider" id="openness" min="0" max="100" value="60">
+            <span class="trait-value" id="openness-val">60</span></div>
+        <div class="trait-item"><span class="trait-label">📋 尽责 <small>C</small></span>
+            <input type="range" class="trait-slider" id="conscientiousness" min="0" max="100" value="70">
+            <span class="trait-value" id="conscientiousness-val">70</span></div>
+        <div class="trait-item"><span class="trait-label">🗣️ 外向 <small>E</small></span>
+            <input type="range" class="trait-slider" id="extraversion" min="0" max="100" value="50">
+            <span class="trait-value" id="extraversion-val">50</span></div>
+        <div class="trait-item"><span class="trait-label">🤝 宜人 <small>A</small></span>
+            <input type="range" class="trait-slider" id="agreeableness" min="0" max="100" value="65">
+            <span class="trait-value" id="agreeableness-val">65</span></div>
+        <div class="trait-item"><span class="trait-label">🌊 神经质 <small>N</small></span>
+            <input type="range" class="trait-slider" id="neuroticism" min="0" max="100" value="35">
+            <span class="trait-value" id="neuroticism-val">35</span></div>
+
+        <div class="mbti-select">
+            <label for="mbtiType">🧬 MBTI 性格 (补充调节) :</label>
+            <select id="mbtiType">
+                <option value="INTJ">INTJ (战略家)</option>
+                <option value="INTP">INTP (逻辑学家)</option>
+                <option value="ENTJ">ENTJ (指挥官)</option>
+                <option value="ENTP">ENTP (辩论家)</option>
+                <option value="INFJ" selected>INFJ (提倡者)</option>
+                <option value="INFP">INFP (调停者)</option>
+                <option value="ENFJ">ENFJ (主人公)</option>
+                <option value="ENFP">ENFP (竞选者)</option>
+                <option value="ISTJ">ISTJ (物流师)</option>
+                <option value="ISFJ">ISFJ (守卫者)</option>
+                <option value="ESTJ">ESTJ (总经理)</option>
+                <option value="ESFJ">ESFJ (执政官)</option>
+                <option value="ISTP">ISTP (鉴赏家)</option>
+                <option value="ISFP">ISFP (探险家)</option>
+                <option value="ESTP">ESTP (企业家)</option>
+                <option value="ESFP">ESFP (表演者)</option>
+            </select>
+            <span style="font-size:13px; color:#6f8fa3;">(用于微调特质倾向)</span>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn" id="analyzeBtn">🚀 生成人才分析报告</button>
+        <button class="btn btn-reset" id="resetBtn">↺ 重置</button>
+    </div>
+
+    <!-- 结果展示区 -->
+    <div class="result-box" id="resultBox">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:5px;">
+            <h2 style="color:#0a2a3b; margin:0;">📋 人才画像分析</h2>
+            <span style="background:#dcecf7; padding:4px 18px; border-radius:40px; font-weight:600; font-size:14px; color:#11537a;" id="mbtiDisplay">INFJ</span>
+        </div>
+
+        <div class="result-grid">
+            <!-- 左列：领导力与潜力 -->
+            <div class="card">
+                <h3>⭐ 管理潜力 / 干部适配</h3>
+                <div><span class="score-big" id="leadershipScore">-- <span>/ 100</span></span></div>
+                <div style="margin:10px 0 5px; font-weight:600; color:#1f5a7a;">轮岗适应度：<span id="rotationScore">--</span></div>
+                <div style="font-size:14px; color:#2e5b77; background:#eef6fb; padding:10px; border-radius:16px; margin-top:10px;" id="leadershipAdvice">
+                    建议：请点击分析按钮
+                </div>
+            </div>
+
+            <!-- 右列：核心特质得分 -->
+            <div class="card">
+                <h3>🎯 核心行为特质 (加权得分)</h3>
+                <div id="traitList">
+                    <div><span class="trait-tag">⚙️ 执行力</span> <span class="val" id="trait_exec">--</span></div>
+                    <div><span class="trait-tag">🤗 服务意识</span> <span class="val" id="trait_service">--</span></div>
+                    <div><span class="trait-tag">💡 产品研发</span> <span class="val" id="trait_product">--</span></div>
+                    <div><span class="trait-tag">📢 沟通能力</span> <span class="val" id="trait_comm">--</span></div>
+                </div>
+                <div style="font-size:12px; color:#7899ae; margin-top:8px;">* 分数越高代表该特质越突出</div>
+            </div>
+
+            <!-- 第三行：部门推荐 (跨两列) 使用grid跨列 -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <h3>🏢 部门匹配度推荐 (Top 5)</h3>
+                <div id="deptList">
+                    <div class="dept-match"><span class="dept-name">请点击分析</span><span class="dept-score">--</span></div>
+                </div>
+                <div style="font-size:12px; color:#7899ae; margin-top:8px;">* 根据大五维度与岗位职责加权计算</div>
+            </div>
+
+            <!-- 第四行：详细建议 -->
+            <div class="card" style="grid-column: 1 / -1; background:#f2f8fe;">
+                <h3>📌 综合培养建议 (针对年轻干部/管培生)</h3>
+                <div id="finalAdvice" style="line-height:1.7; color:#1a4055;">
+                    分析结果将在此显示具体的发展路径和搭档建议。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footnote">
+        ⚙️ 逻辑基于旅游业大五人格模型 · 仅供参考 ·
+        <span id="exampleFill">点击填入「产品经理型管培生」示例</span>
+    </div>
+</div>
+
+<script>
+    // ---- DOM 绑定 ----
+    const sliders = document.querySelectorAll('.trait-slider');
+    const valMap = {
+        openness: 'openness-val',
+        conscientiousness: 'conscientiousness-val',
+        extraversion: 'extraversion-val',
+        agreeableness: 'agreeableness-val',
+        neuroticism: 'neuroticism-val'
+    };
+    Object.keys(valMap).forEach(id => {
+        const slider = document.getElementById(id);
+        const valSpan = document.getElementById(valMap[id]);
+        if (slider && valSpan) {
+            slider.addEventListener('input', () => { valSpan.textContent = slider.value; });
+        }
+    });
+
+    // ---- 重置 ----
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        sliders.forEach(s => s.value = 50);
+        Object.values(valMap).forEach(id => { document.getElementById(id).textContent = '50'; });
+        document.getElementById('mbtiType').value = 'INFJ';
+        document.getElementById('resultBox').classList.remove('show');
+    });
+
+    // ---- 示例填充 ----
+    document.getElementById('exampleFill').addEventListener('click', () => {
+        const ex = { openness: 78, conscientiousness: 75, extraversion: 48, agreeableness: 62, neuroticism: 30 };
+        for (let key in ex) {
+            const slider = document.getElementById(key);
+            if (slider) { slider.value = ex[key]; document.getElementById(valMap[key]).textContent = ex[key]; }
+        }
+        document.getElementById('mbtiType').value = 'INTJ';
+        document.getElementById('analyzeBtn').click();
+    });
+
+    // ---- 核心分析逻辑 ----
+    document.getElementById('analyzeBtn').addEventListener('click', function() {
+        const O = parseInt(document.getElementById('openness').value);
+        const C = parseInt(document.getElementById('conscientiousness').value);
+        const E = parseInt(document.getElementById('extraversion').value);
+        const A = parseInt(document.getElementById('agreeableness').value);
+        const N = parseInt(document.getElementById('neuroticism').value);
+        const mbti = document.getElementById('mbtiType').value;
+
+        // 1. 提取MBTI维度
+        const mbtiE = mbti[0] === 'E' ? 1 : 0;
+        const mbtiS = mbti[1] === 'S' ? 1 : 0; // S=1 务实, N=1 抽象(已用O表示)
+        const mbtiT = mbti[2] === 'T' ? 1 : 0; // T=1 理性, F=1 感性
+        const mbtiJ = mbti[3] === 'J' ? 1 : 0; // J=1 计划, P=1 灵活
+
+        // 2. 核心特质计算（基础分数来自大五，MBTI做微调）
+        // 执行力 = C (尽责) + (J ? +8 : -5) 
+        let exec = C + (mbtiJ === 1 ? 6 : -4);
+        // 服务意识 = A + (F倾向? 宜人本身已经包含, T则适当降低温暖度) + (E低但A高则更耐心)
+        let service = A + (mbtiT === 1 ? -5 : +5);
+        // 产品研发 = O + (N直觉倾向? O已经覆盖) + (J加强落地, P加强发散)
+        let product = O + (mbtiJ === 1 ? 2 : 6);
+        // 沟通能力 = E + (A作为调节, 高A且高E最佳) + (T让沟通更直接, F更委婉)
+        let comm = E + (A > 60 ? 5 : 0) + (mbtiT === 1 ? 0 : 3);
+
+        // 归一化到0-100
+        const clamp = (v) => Math.min(100, Math.max(0, Math.round(v)));
+        exec = clamp(exec);
+        service = clamp(service);
+        product = clamp(product);
+        comm = clamp(comm);
+
+        // 3. 领导力潜力指数 (中层/干部) : 高O(战略) + 高C(执行) + 低N(稳定) + 适度E(影响力)
+        let leadership = (O * 0.35) + (C * 0.30) + ((100 - N) * 0.25) + (E * 0.10);
+        leadership = Math.round(leadership);
+
+        // 4. 轮岗适应度 (管培生看重) : 高O(学习) + 低N(抗压) + 适度E(社交) 
+        let rotation = (O * 0.4) + ((100 - N) * 0.4) + (E * 0.2);
+        rotation = Math.round(rotation);
+
+        // 5. 部门匹配算法 (权重映射)
+        const depts = [
+            { name: '🏛️ 国内总部', score: O*0.35 + C*0.25 + (100-N)*0.25 + E*0.15 },
+            { name: '🌍 国外总部', score: O*0.40 + (100-N)*0.30 + C*0.20 + E*0.10 },
+            { name: '📋 行政部', score: C*0.40 + A*0.30 + (100-O)*0.15 + (100-N)*0.15 },
+            { name: '💰 财务部', score: C*0.50 + (100-O)*0.30 + (100-N)*0.20 },
+            { name: '⚖️ 法律部', score: C*0.45 + (100-O)*0.35 + (100-N)*0.20 },
+            { name: '👥 人力部', score: A*0.35 + E*0.30 + C*0.20 + (100-N)*0.15 },
+            { name: '🧳 导游部 (领队)', score: (100-N)*0.40 + C*0.30 + E*0.20 + A*0.10 },
+            { name: '📢 营销部', score: O*0.40 + E*0.35 + C*0.15 + A*0.10 },
+            { name: '💼 销售部', score: E*0.40 + (100-A)*0.20 + C*0.20 + (100-N)*0.20 }
+        ];
+
+        // 排序取前5
+        const sortedDepts = depts.map(d => ({ ...d, score: Math.round(d.score) }))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5);
+
+        // 6. 生成建议文本
+        let leadAdvice = '';
+        if (leadership >= 75) leadAdvice = '🌟 高潜力管理人才。具备战略视野与沉稳心态，建议安排为项目负责人或总监助理，参与重大决策。';
+        else if (leadership >= 60) leadAdvice = '📈 良好管理苗子。执行力稳健，需重点培养「战略思维」和「授权能力」，建议搭配高O的导师。';
+        else leadAdvice = '🌱 专业型人才。管理潜力目前非最强项，更适合在专业条线深钻（如产品、营销专家），避免过早脱离一线。';
+
+        let finalAdviceText = '';
+        if (rotation >= 70) {
+            finalAdviceText = '🔁 该员工「轮岗适应度」极高，非常适合作为管培生跨部门轮岗。建议安排国内总部→营销部→导游部的12个月轮岗路径，全面了解业务链路。';
+        } else if (rotation >= 50) {
+            finalAdviceText = '🔄 具备一定轮岗弹性，建议先在其高匹配部门（见上方Top1）深耕1-2年，再横向拓展至关联部门（如营销与销售互调）。';
+        } else {
+            finalAdviceText = '📌 该员工更倾向于稳定、规则明确的岗位。建议优先定岗在高匹配度的支持型部门（如财务/法律/行政），减少频繁变动，发挥其专注优势。';
+        }
+
+        // 根据MBTI补充一句
+        let mbtiNote = '';
+        if (mbti === 'INTJ' || mbti === 'ENTJ') mbtiNote = ' (其MBTI偏向指挥官/战略家，适合攻坚克难)';
+        else if (mbti === 'ESFJ' || mbti === 'ENFJ') mbtiNote = ' (其MBTI偏向执政官/主人公，适合带领团队、凝聚人心)';
+        else if (mbti === 'ISTJ' || mbti === 'ESTJ') mbtiNote = ' (其MBTI偏向物流师/总经理，适合流程优化与标准化管理)';
+        else mbtiNote = ' (其MBTI特质可作为沟通风格参考)';
+        finalAdviceText += mbtiNote;
+
+        // 7. 渲染到UI
+        document.getElementById('mbtiDisplay').textContent = mbti;
+        document.getElementById('leadershipScore').innerHTML = leadership + ' <span>/ 100</span>';
+        document.getElementById('rotationScore').textContent = rotation;
+        document.getElementById('leadershipAdvice').textContent = leadAdvice;
+
+        document.getElementById('trait_exec').textContent = exec;
+        document.getElementById('trait_service').textContent = service;
+        document.getElementById('trait_product').textContent = product;
+        document.getElementById('trait_comm').textContent = comm;
+
+        // 渲染部门
+        const deptContainer = document.getElementById('deptList');
+        deptContainer.innerHTML = sortedDepts.map(d => 
+            `<div class="dept-match"><span class="dept-name">${d.name}</span><span class="dept-score">${d.score}%</span></div>`
+        ).join('');
+
+        document.getElementById('finalAdvice').textContent = finalAdviceText;
+
+        // 显示结果
+        document.getElementById('resultBox').classList.add('show');
+        window.scrollTo({ top: document.getElementById('resultBox').offsetTop - 20, behavior: 'smooth' });
+    });
+</script>
+</body>
+</html>
